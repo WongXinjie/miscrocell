@@ -190,8 +190,8 @@ EMAIL_BACKEND = 'sae.ext.django.mail.backend.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sina.cn'
 EMAIL_POST = 25
-EMAIL_HOST_USER = 'miscrocell@sina.cn'
-EMAIL_HOST_PASSWORD = '123456qcc'
+EMAIL_HOST_USER = 'xxxxxxxxx'
+EMAIL_HOST_PASSWORD = 'xxxxxx'
 EMAIL_USE_TLS = False
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
