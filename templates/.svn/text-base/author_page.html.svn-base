@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %} {{ author.user_name }}{% endblock %}
+
+{% block aside %}
+<div class="sidebar">
+<p><strong type="font-size: 18px">微客信息</strong></p>
+<p class="text-center">
+<img src="{{ author.get_avatar_url }}" class="img-circle" width="60%" title="{{ author.user_name }}"/>
+</p>
+<p class="lead text-center">{{ author.user_name }}</p>
+{% if not login_author or login_author.id == author.id %}<fieldset disabled>{% endif %}
+<button type="button" class="btn btn-success btn-lg col-sm-12" data-toggle="modal" data-target="#letterModal"><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;私信</button><br/>
+<div class="modal fade" id="letterModal" tabindex="-1" role="dialog" aria-labelledby="letterModelLabel" aria-hidden="true">
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">发私信给{{ author.user_name }}</div>
+		<div class="modal-body">
+		<form class="form-horizontal" action="{% url send_letter %}" method="post" id="letter-form">{% csrf_token %}
+		<input type="hidden" name="uid" value="{{ author.id }}"/>
+		<div class="form-group required">
+		<div class="col-sm-12">	
+			<textarea rows="10" class="form-control textarea" name="content"  id="id_content"></textarea>
+		</div>
+		</div>
+		<div class="modal-footer">
+		<div class="form-group">
+		<div class="col-sm-offset-8">
+		<input type="submit" class="btn btn-success" value="发送"/>
+		<input type="button" class="btn btn-default" value="取消" data-dismiss="modal"/>
+		</div>
+		</div>
+		</div>
+		</form>
+		</div>
+	</div>
+</div>
+</div>
+{% if not login_author %}<fieldset disabled>{% endif %}
+<p>简介:&nbsp; &nbsp;{{ author.description }}</p>
+</div>
+<div class="sidebar">
+<p><strong type="font-size: 18px">标签</strong></p>
+<p>
+{% for tag in tags %}
+{% autoescape off %}
+{{  tag }}
+{% endautoescape %}
+{% endfor %}
+</p>
+</div>
+{% endblock %}
+
+
+{% block content %}
+{% for blog in blogs %}
+	<div class="main">
+	{% if blog.visible or author.id == login_author.id %}
+		<div class="page-header">
+		<h3><a href="{% url blog_article blog.id %}">{{ blog.title }}</a></h3>
+		<h6>
+		<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<a href="{% url blog_author blog.author.id %}">{{ blog.author.user_name}}</a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-folder-open"> {{ blog.category.category_name }}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;{{ blog.published_date|date:"Y年m月d日" }}&nbsp;&nbsp;&nbsp;&nbsp;阅读:&nbsp;{{ blog.count }}
+		</h6>
+		{% autoescape off %}
+		{{ blog.content|safe|truncatewords:"10" }}
+		{% endautoescape %}
+		</div>
+	{% if login_author and author.id == login_author.id %}
+		<a href="{% url edit_blog blog.id %}" class="btn btn-warning">编辑</a>
+		<a href="{% url remove_blog blog.id %}" class="btn btn-danger">删除</a>
+	{% else %}
+		<h5><a href="{% url blog_article blog.id %}">阅读全文>></a></h5>
+	{% endif %}
+{% endif %}
+</div>
+{% endfor %}
+<center>
+{% if paginator.num_pages != 1 %}
+<div class="main">
+<ul class="pagination">
+<li><a href="{% if blogs.has_previous %} ?page={{ blogs.previous_page_number }}{% endif %}">&laquo;</a></li>
+{% for page_num in paginator.page_range %}
+	<li {% ifequal page_num blogs.number %} class="active" {% endifequal%}><a href="?page={{ page_num }}">{{ page_num }} {% ifequal page_num blogs.number %} <span class="sr-only">(current)</span>{% endifequal %}</a><li>
+{% endfor %}
+<li><a href="{% if blogs.has_next %}?page={{ blogs.next_page_number }}{% endif %}">&raquo;</a></li>
+</ul>
+</div>
+{% endif %}
+</center>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$(function(){
+	$('#letter-form').submit(function(){
+		$.ajax({
+			url: '{% url send_letter %}',
+			type: 'POST',
+			data: $(this).serialize(),
+			success: function(data){
+				$('#id_content').val('');
+				$('#letterModal').modal("hide");
+				if(data.status == 'success') alert('发送成功！');
+				}
+			});
+		return false;
+	});
+			
+});
+</script>
+{% endblock %}
+
+ 

@@ -1,0 +1,10 @@
+<div id="comment_{{ comment.id }}">
+<h6><a href="{% url blog_author comment.sender.id %}">{{ comment.sender.user_name }}</a>&nbsp;&nbsp;{{ comment.add_time|date:"Y-m-d H:m:s" }}</h6>
+	{{  comment.content }}
+<div class="text-right">
+	{% if login_author and comment.sender.id == login_author.id %}<a href="{% url remove_comment comment.id %}" class="delete" id="{{ comment.id }}">删除</a>{% endif %}
+	{% if login_author.id != comment.sender.id %}<a href="#reply" class="reply">回复</a>{% endif %}
+</div>
+</div>
+<hr/>
+

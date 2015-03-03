@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/miscrocell/!svn/ver/34/1/singleblog
+END
+admin.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/miscrocell/!svn/ver/25/1/singleblog/admin.py
+END
+upload_images.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/miscrocell/!svn/ver/21/1/singleblog/upload_images.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/miscrocell/!svn/ver/34/1/singleblog/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/miscrocell/!svn/ver/1/1/singleblog/__init__.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/miscrocell/!svn/ver/28/1/singleblog/utils.py
+END
+auth.py
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/miscrocell/!svn/ver/10/1/singleblog/auth.py
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/miscrocell/!svn/ver/1/1/singleblog/tests.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/miscrocell/!svn/ver/34/1/singleblog/models.py
+END
+decorators.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/miscrocell/!svn/ver/1/1/singleblog/decorators.py
+END
+clean_context.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/miscrocell/!svn/ver/10/1/singleblog/clean_context.py
+END

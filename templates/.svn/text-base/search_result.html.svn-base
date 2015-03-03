@@ -1,0 +1,40 @@
+{% extends "base.html" %}	
+ 		{% block content %}
+		<div class="main">
+		{% if authors|length %}
+		<p class="lead"> 用户</p>
+		{% for author in authors %}
+		<h4><a href="{% url blog_author author.id %}">{{ author.user_name }} </a></h4>
+		{% endfor %}
+		<br/><br/>
+		{% else %}
+		<p>没有匹配作者信息</p>
+		{% endif %}
+		</div>
+		<div class="main">
+		{% if blogs|length %}
+		<p class="lead">文章</p>
+		{% for blog in blogs %}
+			{% if blog.visible %}
+			<h4><a href="{% url blog_article blog.id %}">{{ blog.title }}</a></h4>
+			{% load markup %}
+			{{ blog.content|safe|markdown|truncatewords:"5"}}
+			{% endif %}
+		{% endfor %}
+		{% else %}
+		<p>没有匹配文章信息</p>
+		{% endif %}
+		</div>
+		{% endblock %}
+		
+		{% block aside %}
+			<div class="sidebar">
+			<p><strong type="font-size: 18px">热门阅读</strong></p>
+			<div class="list-group">
+				{% for blog in top5blogs %}
+					<a class="list-group-item" href="{% url blog_article blog.id %}">{{ blog.title }}</span></a>
+				{% endfor %}
+			</div>
+			</div>
+		{% endblock %}
+

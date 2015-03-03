@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}联系我们{% endblock %}
+{% block content %}
+<div class="main">
+<p><strong>联系信息</strong></p>
+<address>
+邮箱: <a href="mailto:#">hgxinjie#163.com(请将#替换成@)</a>
+</address>
+</div>
+<div class="main">
+<p><strong>留言</strong></p>
+<p><a href="#contact" id="contact-link">给我留言</a></p>
+<form class="form-horizontal" action="{% url leave_message %}" method="post" id="contact-form">{% csrf_token %}
+	<div class="form-group">
+	<label for="contact" class="col-sm-2 control-label">联系方式</label>
+	<div class="col-sm-10">
+	<input type="text" name="contact" id="contact" class="form-control" placeholder="邮箱或电话">
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="content" class="col-sm-2 control-label">内容</label>
+	<div class="col-sm-10">
+	<textarea class="form-control textarea" name="content" id="content" rows="10"></textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="verify" class="col-sm-2 control-label">验证码</label>
+	<div class="col-sm-6">
+	<input type="text" name="verify" id="verify" class="form-control" placeholder="请输入验证码">
+	</div>
+	<div class="col-sm-4">
+	<img src="{% url get_verifycode %}"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<div class="col-sm-offset-10">
+	<input type="submit" value="提交"/>
+	</div>
+	</div>
+</form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	$(function(){
+		$('#contact-form').hide();
+		$('#contact-link').click(function(){
+			$('#contact-form').toggle('slow');
+		});
+		$('#contact-form').submit(function(){
+			$contact = $('#contact').val();
+			$content = $('#content').text();
+			$verify = $('#verify').val(); 
+			if($contact.trim().length == 0){
+				alert('联系方式不能为空!');
+				return false;
+			}
+			if($content.trim().length == 0){
+				alert('内容不能为空!');
+				return false;
+			}
+			if($verify.trim().length == 0 ){
+				alert('验证码不能为空!');
+				return false;
+			}
+			$.ajax({
+				url: '{% url leave_message %}',
+				type: 'POST',
+				data: $(this).serialize(),
+				success:function(data){
+					if(data.message=='verify_error'){
+						$('#verify').val('');
+						alert('验证码错误!');
+					}else if(data.message=='sended'){
+						$('#verify').val('');
+						$('#contact-form').hide();
+						alert('您已发送过了!');	
+					}else{
+						$('#contact').val('');
+						$('#content').text('');
+						$('#verify').val('');
+						$('#contact-form').hide();
+						alert('发送成功!');
+					}
+				}
+			});
+			return false;
+		});
+			
+	});
+</script>
+{% endblock %}
+
+
+ 
+	

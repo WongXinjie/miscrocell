@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ blog.title }}{% endblock %}
+{% block aside %}
+<div class="sidebar">
+{% if login_author.id == author.id %}
+<p><strong type="font-size: 18px">我的资料</strong></p>
+{% else %}
+<p><strong type="font-size: 18px">关于作者</strong></p>
+{% endif %}
+<p class="text-center"><img src="{{ author.get_avatar_url }}"  class="img-circle" width="60%" title="{{ author.user_name }} "/>
+</p>
+<p class="lead text-center">{{ author.user_name }}</p>
+<p>简介:&nbsp;{{ author.description }}</p>
+</div>
+{% endblock %}
+{% block content %}
+<div class="main">
+<h3 class="text-center">{{ blog.title }}</h3>
+<br/>
+<h5>
+	<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<a href="{% url blog_author blog.author.id %}">{{ blog.author.user_name }}</a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;{{ blog.published_date|date:"Y年m月d日"}}&nbsp;&nbsp;&nbsp;&nbsp;阅读:&nbsp;&nbsp;{{ blog.count }}
+</h5>
+<h6>
+{% for tag in blog.tag.all %}
+<span class="label label-info">{{ tag.tag_name}}</span>
+{% endfor %}
+</h6>
+<p>
+{% autoescape off %}
+{{ blog.content}}
+{% endautoescape %}
+</p>
+{% if login_author and login_author.id == author.id %}
+<h5>
+<a href="{% url edit_blog blog.id %}">编辑</a>><a href="{% url remove_blog blog.id %}">删除</a>
+</h5>
+{% endif %}
+<br/><br/>
+<blockquote>评论&nbsp;&nbsp;(共<span id="comment_count">{{ comments|length }}</span>条)</blockquote>
+<hr/>
+<div id="comment-area">
+{% for comment in comments %}
+<div id="comment_{{ comment.id }}">
+	<div class="col-sm-2">
+		<img src="{{ comment.sender.get_avatar_url }}" class="img-circle" width="50%" title="{{ comment.sender.user_name }}">
+	</div>
+				<div class="col-sm-10">
+	                 <h6><a href="{% url blog_author comment.sender.id %}">{{ comment.sender.user_name }}</a>&nbsp;&nbsp;{{ comment.add_time|date:"Y-m-d H:m:s" }}</h6>
+				{{ comment.content}}
+				</div>
+	<div class="text-right">
+	{% if comment.sender.id ==  login_author.id or login_author.id == author.id %}<a href="{% url remove_comment comment.id %}" class="delete">删除</a>{% endif %}
+	{% if login_author.id != comment.sender.id %}<a href="#id_add_comment" class="reply" id="{{comment.sender.user_name}}-{{ comment.id }}">回复</a>{% endif %}
+	</div>
+</div>
+<hr/>
+{% endfor %}
+</div>
+<p></p>
+<p>添加评论</p>
+<div id="id_add_comment">
+<div id="id_error_message"></div>
+<form class="form-horizontal" {% if login_author %} action="{% url add_comment blog.id %}" method="post" {% endif %} id="comment-form">{% csrf_token %}
+	{% if not login_author %} <fieldset disabled>{% endif %}
+	<div class="form-group required">
+	<div class="col-sm-12">
+		<textarea rows="3" class="form-control comment textarea" name="content" id="id_content"></textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<div class="col-sm-offset-11">
+		<input type="submit" value="提交" class="btn btn-default"/>
+	</div>
+	</div>
+	{% if not login_author %}</fieldset>{% endif %}
+</form>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/prettify.js"></script>
+<script type="text/javascript">
+	$(window).load(function(){
+		prettyPrint();
+	});
+	
+	$(function(){
+		$('#comment-form').submit(function(){
+			$('#id_error_message').html('');
+			var $strlen = $('#id_content').val().length;
+			if($strlen > 280){
+				$('#id_error_message').html('不能超过280字！');
+				return false;
+			}
+			$.ajax({
+				url: '{% url add_comment blog.id %}',
+				type: 'POST',
+				data: $(this).serialize(),
+				success: function(data){
+					$('#comment-area').append(data);
+					$('#id_content').val('');
+					var $count = parseInt($('#comment_count').html())+1;
+					$('#comment_count').html($count+'');
+				}
+			});
+			return false;
+		});
+		/*
+		$('.delete').click(function(evt){
+			evt.preventDefault();
+			var $commentUrl = $(this).attr('href');
+			var $commentID = $(this).attr('id');
+			$.get($commentUrl, {}, function(data){
+				$('#comment_'+$commentID).hide();
+				var $count = parseInt($('#comment_count').html())-1;
+				$('#comment_count').html($count+'');
+			});
+		});
+		*/
+		$('.reply').click(function(){
+			var $commentID = $(this).attr('id');
+			var $name = $commentID.split("-")[0];
+			$('#id_content').val('@'+$name+':\t');
+			$('#id_content').focus();
+		});
+			
+	});
+</script>
+{% endblock %}
+
+
+ 
+	

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container" id="content">
+<br>
+
+<div class="panel panel-default">
+<div class="panel-body">
+<div class="row">
+<div class="jumbotron">
+	<h1>Ooops！该页面找不到！</h1>
+	<p>唔，也许是你的超链接输错了吧？<p>好好检查一下啦。</p><p>反正就是找不到页面就是了。</p>
+	<p style="text-align: center"> <a class="btn btn-info btn-lg" role="button" href="/">那么，返回首页</a></p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base_admin.html" %}
+{% block title %}{{ login_author.user_name }} {% endblock %}
+
+{% block aside %}
+<div class="main">
+			<table class="table table-hover">
+			<thead><tr><th>通信列表</th></tr></thead>
+			<tbody>	
+			{% if sender_list %}
+			{% for s in sender_list %}
+			<tr><td>
+			<a href="/user/message/view/?sid={{ s.id }}">@{{ s.user_name }}</a>
+			</td></tr>
+			{% endfor %}
+			{% endif %}
+			</tbody>
+			</table>
+</div>
+{% endblock %}
+{% block content %}
+<div class="main">
+{% if message_list and sender %}	
+		<form class="form-horizontal" id="history-form">
+			<div class="form-group">
+			<label class="control-label" for="id_history">私信记录</label>
+			<div class="col-sm-12">
+				<textarea class="form-control textarea"  disabled id="id_history" rows="15" style="backgroup-color: #FFF">
+				{% for message in message_list %}
+				{% if message.sender_id == login_author.id %}我{% else %}
+				{{ message.get_sender_name }}{% endif %}&nbsp;&nbsp;&nbsp;{{ message.sended_time|date:"Y-m-d H:m:s" }}
+				{{ message.content }}
+				{% endfor %}
+				</textarea>
+			</div>
+			</div>
+			<p></p>
+			<p class="text-right"><a href="{% url delete_messages %}?sid={{ sender.id }}" id="id_delete_message">删除记录</a></p>
+		</form>
+		<div id="id_error_message"></div>
+		<form class="form-horizontal" action="{% url send_letter %}" method="POST" id="letter-form">{% csrf_token %}
+			<input type="hidden" name="uid" value="{{ sender.id }}"/>
+			<div class="form-group required">
+			<label class="control-label" for="id_letter">回复&nbsp;&nbsp;&nbsp;{{ sender.user_name}}&nbsp;&nbsp;</label>
+			<div class="col-sm-12">
+				<textarea class="form-control textarea" name="content" id="id_letter" rows="3"></textarea>
+			</div>
+			</div>
+	
+			<div class="form-group">
+			<div class="col-sm-offset-11">
+			<input type="submit" value="回复" class="btn btn-default"/>
+			</div>
+			</div>
+		</form>
+				
+		
+{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$(function(){
+	$('#id_history').scrollTop($('#id_history')[0].scrollHeight);
+	$('.sender-list-tab').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#letter-form').submit(function(){
+		$('#id_error_message').html('');
+		var $strlen = $('#id_letter').val().length;
+		if($strlen > 280){
+			$('#id_error_message').html('不能超过280字！');
+			return false;
+		}	
+		$.ajax({
+			url: '{% url send_letter %}',
+			type: 'POST',
+			data: $(this).serialize(),
+			success: function(data){
+				$('#id_letter').val('');
+				var $text = "我"+"&nbsp;&nbsp;&nbsp"+data.sended_time+"\n\t\t\t\t"+data.content;
+				$('#id_history').append($text);
+				$('#id_history').append("\n\n\t\t\t\t");
+				$('#id_history').scrollTop($('#id_history')[0].scrollHeight);
+			}
+		});
+		return false;
+	});
+
+	$('#id_delete_message').click(function(){
+		$.get('{% url delete_messages %}?sid={{ sender.id }}', function(data){
+			$('#id_history').val('');
+			if(data.status == 'success') alert('删除成功！');
+		});
+		
+		return false;
+	});
+				
+});
+</script>
+{% endblock %}
+
+ 
+	
+
+
+

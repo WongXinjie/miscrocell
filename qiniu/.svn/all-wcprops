@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/miscrocell/!svn/ver/20/1/qiniu
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/miscrocell/!svn/ver/20/1/qiniu/__init__.py
+END
+http.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/miscrocell/!svn/ver/20/1/qiniu/http.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/miscrocell/!svn/ver/20/1/qiniu/utils.py
+END
+auth.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/miscrocell/!svn/ver/20/1/qiniu/auth.py
+END
+compat.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/miscrocell/!svn/ver/20/1/qiniu/compat.py
+END
+main.py
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/miscrocell/!svn/ver/20/1/qiniu/main.py
+END
+config.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/miscrocell/!svn/ver/20/1/qiniu/config.py
+END

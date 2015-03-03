@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/miscrocell/!svn/ver/20/1/qiniu/services/processing
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/miscrocell/!svn/ver/20/1/qiniu/services/processing/__init__.py
+END
+cmd.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/miscrocell/!svn/ver/20/1/qiniu/services/processing/cmd.py
+END
+pfop.py
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/miscrocell/!svn/ver/20/1/qiniu/services/processing/pfop.py
+END

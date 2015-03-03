@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/miscrocell/!svn/ver/34/1/blog
+END
+wsgi.py
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/miscrocell/!svn/ver/1/1/blog/wsgi.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/miscrocell/!svn/ver/1/1/blog/__init__.py
+END
+settings.py
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/miscrocell/!svn/ver/20/1/blog/settings.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/miscrocell/!svn/ver/34/1/blog/urls.py
+END

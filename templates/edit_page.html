@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}编辑博客{% endblock %}	
+	{% block content %}
+	<div id="editpage">
+<form name="blog" class="form-horizontal" {% if blog %} action="{% url edit_blog blog.id %}" {% else %} action="{% url add_blog %}" {% endif %} method="post">{% csrf_token %}
+	<div class="form-group inline">
+		<label for="id_title">标题</label>
+		<input type="text" class="form-control" name="title" id="id_title" {% if blog %} value="{{ blog.title }}" {% endif %}>
+	</div>
+	<div class="form-group required">
+	<textarea name="content" id="id_content" style="width:800px; height:400px;">{% if blog %} {{ blog.content }}{% endif %}</textarea>
+	</div>
+	<div class="form-group required">
+		{% if blog %}
+		<label class="radio-inline">
+			<input type="radio" name="visible_status" id="r1" value="private" {% if not blog.visible %} checked="checked" {% endif %}>自己可见
+		</label>
+		<label class="radio-inline">
+			<input type="radio" name="visible_status" id="public" value="public" {% if blog.visible %} checked="checked"{% endif %}>公开
+		</label>
+		{% else %}
+		<label class="radio-inline">
+			<input type="radio" name="visible_status" id="r1" value="private">自己可见
+		</label>
+		<label class="radio-inline">
+			<input type="radio" name="visible_status" id="public" value="public" checked="checked">公开
+		</label>
+		{% endif %}
+	</div>
+		<div class="form-group required">
+		<label for="category" class="inline">分类</label>
+		<select id="category" name="cid" class="form-control">
+		{% for category in categories %}
+		<option value="{{ category.id }}" {% if blog and blog.category.id == category.id %} selected="selected" {% endif %}>{{ category.category_name }}</option>
+		{% endfor %}
+		</select>
+		</div>
+		<div class="form-group required">
+		<label>标签</label>
+		{% for tag in tags %}
+		<label>
+		<input type="checkbox" name="tags" value="{{ tag.id }}">{{ tag.tag_name }}
+		</label>
+		{% endfor %}
+		<input type="submit" class="btn btn-success col-sm-offset-11" value="发表"/>
+</form>	
+	{% endblock %}
+	
+{% block scripts %}
+	<script type="text/javascript">
+	$(function(){
+		$('#submit-button').click(function(){
+		});
+	});	
+	</script>
+	<script charset="utf-8" src="/static/kindeditor/kindeditor.js"></script>
+	<script charset="utf-8" src="/static/kindeditor/lang/zh_CN.js"></script>
+	<script>
+		KindEditor.ready(function(K){
+			window.editor = K.create("#id_content", {
+				cssData: 'body {font-size: 16px; }', 
+				uploadJson: '{% url upload_images %}',
+				allowFileManager: true, 
+				afterCreate: function(){
+					var self = this;
+					K.ctrl(document, 13, function(){
+						self.sync();
+						K('form[name=blog]')[0].submit();
+					})
+					k.ctrl(self.edit.doc, 13, function(){
+						self.sync();
+						K('form[name=blog]')[0].submit();
+					});
+				}
+			});
+		});
+	</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}	
+ 		{% block content %}
+		{% for blog in blogs %}
+			<div class="main">
+			{% if blog.visible %}
+			<div class="page-header">
+			<h3><a href="{% url blog_article blog.id %}">{{ blog.title }}</a></h3>
+			<h6>
+			<span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;<a href="{% url blog_author blog.author.id %}">{{ blog.author.user_name }}</a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;{{ blog.published_date|date:"Y年m月d日"}} &nbsp;&nbsp;&nbsp;&nbsp;阅读:&nbsp;&nbsp;{{ blog.count }}
+			</h6>
+			<h5>{% for tag in blog.tag.all %} 
+			<span class="label label-info">{{ tag.tag_name }}</span>
+			    {% endfor %}
+			</h5>
+			{% autoescape off %}
+			{{ blog.content|safe|truncatewords:"10"}}
+			{% endautoescape %}
+			</div>
+		<h5><a href="{% url blog_article blog.id %}">阅读全文>></a></h5><p></p>
+			{% endif %}
+			</div>
+		{% endfor %}
+<center>
+{% if paginator.num_pages != 1 %}
+<div class="main">
+<ul class="pagination">
+<li><a href="{% if blogs.has_previous %} ?page={{ blogs.previous_page_number }}{% endif %}">&laquo;</a></li>
+{% for page_num in paginator.page_range %}
+	<li {% ifequal page_num blogs.number %} class="active" {% endifequal%}><a href="?page={{ page_num }}">{{ page_num }} {% ifequal page_num blogs.number %} <span class="sr-only">(current)</span>{% endifequal %}</a><li>
+{% endfor %}
+<li><a href="{% if blogs.has_next %}?page={{ blogs.next_page_number }}{% endif %}">&raquo;</a></li>
+</ul>
+</div>
+{% endif %}
+</center>
+		{% endblock %}
+		</div>
+		
+		{% block aside %}
+			<div class="sidebar">
+			<p><strong type="font-size: 18px">热门阅读</strong></p>
+			<div class="list-group">
+				{% for blog in top5blogs %}
+					<a class="list-group-item" href="{% url blog_article blog.id %}">{{ blog.title }} </a>
+				{% endfor %}
+			</div>
+			</div>
+			<div class="sidebar">
+			<p><strong type="font-size: 18px">标签</strong></p>
+			<p> 
+			{% for tag in tags %}
+			{% autoescape off %}
+			{{ tag }}
+			{% endautoescape %}
+			{% endfor %}
+			</p>
+			</div>
+		{% endblock %}
+

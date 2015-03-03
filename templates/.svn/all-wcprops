@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/miscrocell/!svn/ver/34/1/templates
+END
+blog_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/miscrocell/!svn/ver/27/1/templates/blog_page.html
+END
+message_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/miscrocell/!svn/ver/14/1/templates/message_page.html
+END
+edit_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/miscrocell/!svn/ver/26/1/templates/edit_page.html
+END
+archive.html
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/miscrocell/!svn/ver/26/1/templates/archive.html
+END
+base_admin.html
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/miscrocell/!svn/ver/30/1/templates/base_admin.html
+END
+register.html
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/miscrocell/!svn/ver/18/1/templates/register.html
+END
+contact.html
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/miscrocell/!svn/ver/33/1/templates/contact.html
+END
+author_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/miscrocell/!svn/ver/31/1/templates/author_page.html
+END
+search_result.html
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/miscrocell/!svn/ver/29/1/templates/search_result.html
+END
+500.html
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/miscrocell/!svn/ver/1/1/templates/500.html
+END
+set_info.html
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/miscrocell/!svn/ver/1/1/templates/set_info.html
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/miscrocell/!svn/ver/26/1/templates/index.html
+END
+comment_piece.html
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/miscrocell/!svn/ver/12/1/templates/comment_piece.html
+END
+login.html
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/miscrocell/!svn/ver/18/1/templates/login.html
+END
+author_admin.html
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/miscrocell/!svn/ver/34/1/templates/author_admin.html
+END
+base.html
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/miscrocell/!svn/ver/30/1/templates/base.html
+END
+about.html
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/miscrocell/!svn/ver/30/1/templates/about.html
+END

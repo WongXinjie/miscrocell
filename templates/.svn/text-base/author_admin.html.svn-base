@@ -1,0 +1,440 @@
+{% extends "base_admin.html" %}
+{% block title %}{{ login_author.user_name }} {% endblock %}
+
+{% block aside %}
+			<ul id="adminTab" class="nav nav-sidebar" role="tablist">
+				<li><a href="{% url add_blog %}"><h5><span class="glyphicon glyphicon-pencil"></span>&nbsp; 发表文章</h5></a></li>
+				<li class="active"><a href="#bloglist" id="blog-tab" role="tab" tab-toggle="tab" aria-controls="bloglist" aria-expanded="true"><h5><span class="glyphicon glyphicon-list-alt"></span>&nbsp; 我的文章</h5></a></li>
+				<li><a href="#authorinfo" id="info-tab" role="tab" tab-toggle="tab" aria-controls="info"><h5><span class="glyphicon glyphicon-user"></span> &nbsp;我的资料</h5></a></li>
+				<li><a href="#message" id="message-tab" role="tab" tab-toggle="tab" aria-controls="message"><h5><span class="glyphicon glyphicon-envelope"></span>&nbsp;消息&nbsp;&nbsp;<span class="badge">{% if total_count  %}{{ total_count  }}{% endif %}</span></h5></a></li>
+				<li><a href="#catetag" id="ct-tab" role="tab" tab-toggle="tab" aria-controls="catetag"><h5><span class="glyphicon glyphicon-tags"></span> &nbsp;标签/分类</h5></a></li>
+			</ul>
+{% endblock %}
+
+{% block content %}	
+		
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane fade in active" id="bloglist" aria-labelledBy="blog-tab">
+{% for blog in blogs %}
+<div class="main">
+		<div class="page-header">
+		<h3><a href="{% url blog_article blog.id %}">{{ blog.title }}</a></h3>
+		<h6>
+		<span class="glyphicon glyphicon-calendar"><span>&nbsp;{{ blog.published_date|date:"Y年m月d日" }}&nbsp;&nbsp;阅读:&nbsp;{{ blog.count }}
+		</h6>
+		{% autoescape off %}
+		{{ blog.content|truncatewords:"10" }}
+		{% endautoescape %}
+		</div>
+		<a href="{% url edit_blog blog.id %}" class="btn btn-warning">编辑</a>
+		<a href="{% url remove_blog blog.id %}" class="btn btn-danger">删除</a>
+</div>
+{% endfor %}
+<center>
+{% if paginator.num_pages != 1 %}
+<div class="main">
+<ul class="pagination">
+<li><a href="{% if blogs.has_previous %} ?page={{ blogs.previous_page_number }}{% endif %}">&laquo;</a></li>
+{% for page_num in paginator.page_range %}
+	<li {% ifequal page_num blogs.number %} class="active" {% endifequal%}><a href="?page={{ page_num }}">{{ page_num }} {% ifequal page_num blogs.number %} <span class="sr-only">(current)</span>{% endifequal %}</a><li>
+{% endfor %}
+<li><a href="{% if blogs.has_next %}?page={{ blogs.next_page_number }}{% endif %}">&raquo;</a></li>
+</ul>
+</div>
+{% endif %}
+</center>
+				</div>
+		<div class="tab-pane fade" id="authorinfo" aria-labelledBy="info-tab">
+<div class="main">
+<h5>基本信息</h5><hr>
+<div id="info">
+<p class="text-center">
+<img src="{{ author.get_avatar_url }}" class="img-circle" width="15%" title="我的头像"/>
+<p>登录邮箱:&nbsp;&nbsp; {{ author.email }}</p>
+<p>用户名:&nbsp;&nbsp; <span id="p_username">{{ author.user_name }}</span></p>
+<p>个性域名:&nbsp;&nbsp; <span id="p_url">{{ author.url }}</span></p>
+<p>加入时间: &nbsp;&nbsp;{{ author.registered_date|date:"Y年m月d日 H:m:s" }}</p>
+<p>简介: &nbsp;&nbsp;<span id="p_info">{{ author.description }}</span></p>
+<p class="text-right"><a href="#update_pass" id="update_pass">修改密码</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#update_avatar" id="update_avatar">修改头像</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#update_info" id="update_info">修改信息</a></p>
+</div>
+<form class="form-horizontal" action="{% url ajax_set_author_info %}"  method="post" id="user-form">{% csrf_token %}
+	<input type="hidden" name="uid" value="{{ author.id }}" id="id_uid"/>
+	<div class="form-group required">
+		<label class="control-label col-sm-2" for="id_username">用户名</label>
+		<div class="col-sm-8">
+		<input type="text" class="form-control" name="username" id="id_username" value="{{ author.user_name }}">
+		</div>
+	</div>
+	{% if not author.url %}
+	<div class="form-group required">
+		<label class="control-label col-sm-2" for="id_url">个性域名</label>
+		<div class="col-sm-8">
+		<input type="text" class="form-control" name="url" id="id_url" value="{{ author.url }}">
+		</div>
+	</div>
+	{% endif %}
+	<div class="form-group">
+		<label class="control-label col-sm-2" for="id_info">简介:</label>
+		<div class="col-sm-8">
+		<textarea class="form-control textarea" name="info" id="id_info" rows="3">{{ author.description }}</textarea>
+		</div>
+	</div>
+	<div class="form-group">
+	<div class="col-sm-offset-9">
+	<input type="submit" value="保存" class="btn btn-info">
+	</div>
+	</div>
+	</p>
+</form>
+<div id="pass-area">
+<hr/>
+<span id="pass-error-message"></span>
+<form class="form-horizontal" action="{% url reset_password %}" method="post" id="pass-form">{% csrf_token %}
+<input type="hidden" name="uid" value="{{ login_author.id }}"/>
+<div class="form-group required">
+<label class="control-label col-sm-2" for="id_old_pass">当前密码</label>
+<div class="col-sm-4">
+	<input type="password" class="form-control" name="oldpass" id="id_old_pass"/>
+	<span id="old_pass_error"></span>
+</div>
+</div>
+<div class="form-group required">
+<label class="control-label col-sm-2" for="id_new_pass1">新密码</label>
+<div class="col-sm-4">
+	<input type="password" class="form-control" name="newpass1" id="id_new_pass1"/>
+</div>
+</div>
+<div class="form-group required">
+<label class="control-label col-sm-2" for="id_new_pass2">新密码(确认)</label>
+<div class="col-sm-4">
+	<input type="password" class="form-control" name="newpass2" id="id_new_pass2"/><span id="new_pass_error"></span>
+</div>
+</div>
+<div class="form-group">
+<div class="col-sm-offset-9">
+<input type="submit" value="修改" class="btn btn-success">
+</div>
+</div>
+</form>
+<hr/>
+</div>
+<div id="avatar-area">
+<hr/>
+<form class="form-horizontal" action="{% url set_avatar %}" method="post" id="avatar-form">{% csrf_token %}
+<input type="hidden" name="uid" value="{{ login_author.id }}"/>
+<table cellspacing="10">
+<tbody>
+<tr>
+<td><img src="/static/images/user_avatar_1_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_1" value="1" checked="checked"></td>
+<td><img src="/static/images/user_avatar_2_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_2" value="2"></td>
+<td><img src="/static/images/user_avatar_3_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_3" value="3"></td>
+<td><img src="/static/images/user_avatar_4_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_4" value="4"></td>
+</tr>
+<tr>
+<td><img src="/static/images/user_avatar_5_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_5" value="5"></td>
+<td><img src="/static/images/user_avatar_6_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_6" value="6"></td>
+<td><img src="/static/images/user_avatar_7_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_7" value="7"></td>
+<td><img src="/static/images/user_avatar_8_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_8" value="8"></td>
+</tr>
+<tr>
+<td><img src="/static/images/user_avatar_9_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_9" value="9"></td>
+<td><img src="/static/images/user_avatar_10_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_10" value="10"></td>
+<td><img src="/static/images/user_avatar_11_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_11" value="11"></td>
+<td><img src="/static/images/user_avatar_12_large.png" class="img-circle" width="50%"/>
+<input type="radio" name="avatar_type" id="id_12" value="12"></td>
+</tr>
+</tbody>
+</table>
+<p class="text-right">
+<input type="submit" value="修改" class="btn btn-success">
+</p>
+</form>
+<hr/>
+</div>
+</div>
+<div class="main">
+<h5>微克信息</h5><hr/>
+<div id="id_blog_info">
+<p> 您一共写了&nbsp;<span class="lead">{{ blogs|length }}</span>&nbsp;篇文章</p>
+<p> 您个人主页被访问&nbsp;<span class="lead">{{ author.visitors }}</span>&nbsp;次</p>
+</div>
+</div>
+				</div>
+				<div class="tab-pane fade" id="message" aria-labelledBy="message-tab">
+				<div class="main">
+
+				<ul id="messageTab" class="nav nav-tabs">
+				<li class="active"><a href="#comments" id="comment-tab" role="tab" aria-controls="comments" aria-expanded="true">评论&nbsp;&nbsp;<span class="badge">{% if new_comment_list|length %}{{ new_comment_list|length }}{% endif %}</span></a></li>
+				<li><a href="#letters" id="letter-tab" role="tab" aria-controls="letters">私信&nbsp;&nbsp;<span class="badge">{% if new_message_list|length %}{{ new_message_list|length }}{% endif %}</span></a></li>
+				</ul>
+	<div id="messageTabContent" class="tab-content">
+		<div role="tabpanel" class="tab-pane fade active" id="comments" aria-labelledBy="comment-tab">
+		<br/>
+		<div class="list-group">
+		{% for comment in new_comment_list %}
+			<a class="list-group-item panel panel-success" href="{% url read_comment comment.id %}"><div class="panel-body"><p>{{ comment.content }}<p><p class="text-right">{{ comment.sender.user_name}}&nbsp;&nbsp;&nbsp;{{ comment.add_time|date:"Y-m-d H:m:s" }}</p></div></a>
+		{% endfor %}
+		</div>
+		</div>
+		<div role="tabpanel" class="tab-pane fade" id="letters" aria-labelledBy="letter-tab">
+		<p class="text-right"><a href="{% url view_history %}">查看私信记录</a></p>
+		<div class="list-group">
+		{% for message in new_message_list %}
+			<a class="list-group-item" href="{% url read_letter message.id %}">{{ message.content }}<p class="text-right">@{{ message.get_sender_name }}&nbsp;&nbsp;&nbsp;{{ message.sended_time|date:"Y-m-d H:m:s"}}</p></a>
+
+		{% endfor %}
+		</div>
+		</div>
+		</div>
+	</div>
+	</div>
+
+	<div class="tab-pane fade" id="catetag" aria-labelledBy="ct-tab">
+		<div class="main">
+		<table class="table" id="category-table">
+		<thead><tr><th>分类(点击修改)</th></tr></thead>
+		<tbody id="c_body">
+		{% for category in categories %}
+		<tr id="c_{{ category.id }}"><td id="{{ category.id }}">{{ category.category_name }}</td></tr>
+		{% endfor %}
+		</tbody>
+		</table>
+		<form class="form-inline" action="{% url edit_category %}" method="post" id="category-form">{% csrf_token %}
+			<div class="form-group">
+			<label class="sr-only"></label>
+			<input type="text" class="form-control" name="cname" id="cname" placeholder="分类"/>
+			</div>
+			<input type="submit" value="提交" class="btn btn-success"/>
+		</form>
+		<a href="#add_category" class="btn btn-success col-sm-offset-11" id="add-category">新增</a>
+		</div>
+		<div class="main">
+		<table class="table" id="tag-table">
+		<thead><tr><th>标签(点击修改)</th></tr></thead>
+		<tbody id="t_body">
+		{% for tag in tags %}
+		<tr id="t_{{ tag.id }}"><td id="{{ tag.id }}"><span class="label label-info">{{ tag.tag_name }}</label></td></tr>
+		{% endfor %}
+		</tbody>
+		</table>
+		<form class="form-inline" action="{% url edit_tag %}" method="post" id="tag-form">{% csrf_token %}
+			<div class="form-group">
+			<label class="sr-only"></label>
+			<input type="text" class="form-control" name="tname" id="tname" placeholder="标签"/>
+			</div>
+			<input type="submit" value="提交" class="btn btn-success"/>
+		</form>
+		<a href="#add_tag" class="btn btn-success col-sm-offset-11" id="add-tag">新增</a>
+		</div>
+	</div>
+			</div>
+
+		
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$(function(){
+	$('#user-form').hide();
+	$('#pass-area').hide();
+	$('#avatar-area').hide();
+	$('#category-form').hide();
+	$('#tag-form').hide();
+	$('#adminTab a[href="#bloglist"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+
+	$('#adminTab a[href="#authorinfo"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#adminTab a[href="#message"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#adminTab a[href="#catetag"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#message #messageTab a[href="#comments"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#message #messageTab a[href="#letters"]').click(function(e){
+		e.preventDefault();
+		$(this).tab('show');
+	});
+	$('#add-category').click(function(){
+		$('#category-form input:eq(1)').val('');
+		$('#category-form').show();
+	});
+	$('#add-tag').click(function(){
+		$('#tag-form input:eq(1)').val('');
+		$('#tag-form').show();
+	});
+	$('#update_info').click(function(){
+		$('#info').hide();
+		$('#user-form').show();
+	});
+	$('#update_pass').click(function(){
+		$('#pass-area').toggle("slow");
+	});
+	$('#update_avatar').click(function(e){
+		e.preventDefault();
+		$('#avatar-area').toggle("slow");
+	});
+	$('#id_new_pass2').blur(function(){
+		$('#new_pass_error').text('');
+		var $pass1 = $('#id_new_pass1').val();
+		var $pass2 = $('#id_new_pass2').val();
+		if($pass1 == "" | $pass2 == ""){
+			$('#new_pass_error').text('密码不能为空');
+		}else if($pass1 != $pass2){
+			$('#new_pass_error').text('输入密码不一致');
+		}
+	});
+	$('#id_old_pass').blur(function(){
+		$('#old_pass_error').text('');
+		if($('#id_old_pass').val() == ""){
+			$('#old_pass_error').text('请输入当前密码');
+		}
+	});
+
+	/*
+	$('#user-form').on('submit', function(){
+		$.ajax({
+			url: "ajax_set_author_info/",
+			type: "POST",
+			data: { uid: "{{ author.id }}", username: $('#id_username').val(), info: $('#id_info').val()},
+			success: function(json){
+				console.log(json);
+				$('#info-form').hide();
+				$('#info').show();
+				},
+			errror: function(xhr, errmsg, err){
+			}
+			});
+	});
+	*/
+	$('#user-form').submit(function(){
+		var $formData = $(this).serialize();
+		$.ajax({
+			url: '{% url ajax_set_author_info %}',
+			type: "POST",
+			data: $formData, //{ uid: $('#id_uid').val(), username: $('#id_username').val(), info: $('#id_info').val()},
+			success: function(data){
+				if(data.status == 'success'){
+					$('#p_username').html(data.username);
+					$('#p_url').html(data.url);
+					$('#p_info').html(data.info);
+					$('#user-form').hide();
+					$('#info').show();
+				}else if(data.status == 'url_error'){
+					$('#id_url').val('个性域名已经存在');
+				}else{
+					$('#id_username').val('用户名已经存在');
+				}	
+			}
+			});
+		return false;
+	});
+	
+	$('#pass-form').submit(function(){
+		$.ajax({
+			url: "{% url reset_password %}",
+			type: "POST",
+			data: $(this).serialize(),
+			success: function(data){
+				if(data.status == "success"){
+					$('#pass-area').hide();
+					alert('密码修改成功！');
+				}else if(data.status == "password_not_pairs"){
+					$('#pass-error-message').text('输入密码不一致');
+				}else{
+					$('#pass-error-message').text('密码错误');
+				}
+			}
+		});
+		return false;
+	});
+	$('#avatar-form').submit(function(){
+		$.ajax({
+			url: "{% url set_avatar %}",
+			type: "POST",
+			data: $(this).serialize(),
+			success: function(data){
+				if(data.status == "success"){
+					$('#avatar-area').hide();
+				}
+			}
+		});
+		return false;
+	});		
+	$('#category-form').submit(function(){
+		$.ajax({
+			url: "{% url edit_category %}",
+			type: "POST",
+			data: $(this).serialize(),
+			success: function(data){
+				var ret = $.parseJSON(data);
+				if(ret.status == "SUCCESS" ){
+					$('#category-form').hide();
+				}
+				alert(ret.msg);
+			}
+		});
+		return false;
+	});
+			
+	$('#category-table td').click(function(){
+		var $cid = $(this).attr("id")
+		var $cname = $(this).text();
+		$('#category-form').show();
+		$('#category-form').append('<input type="text" name="cid" value="'+$cid+'" style="visibility:hidden;">');
+	      	$('#category-form input:eq(1)').val($cname);
+
+	});
+	$('#tag-form').submit(function(){
+		$.ajax({
+			url: "{% url edit_tag %}",
+			type: "POST",
+			data: $(this).serialize(),
+			success: function(data){
+				var ret = $.parseJSON(data);
+				if(ret.status == "SUCCESS" ){
+					$('#tag-form').hide();
+				}
+				alert(ret.msg);
+			}
+		});
+		return false;
+	});
+			
+	$('#tag-table td').click(function(){
+		var $tid = $(this).attr("id")
+		var $tname = $(this).text();
+		$('#tag-form').show();
+		$('#tag-form').append('<input type="text" name="tid" value="'+$tid+'" style="visibility:hidden;">');
+	      	$('#tag-form input:eq(1)').val($tname);
+
+	});
+});
+</script>
+{% endblock %}
+
+ 
+	
+
+
+

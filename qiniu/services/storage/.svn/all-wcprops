@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/miscrocell/!svn/ver/20/1/qiniu/services/storage
+END
+uploader.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/miscrocell/!svn/ver/20/1/qiniu/services/storage/uploader.py
+END
+bucket.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/miscrocell/!svn/ver/20/1/qiniu/services/storage/bucket.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/miscrocell/!svn/ver/20/1/qiniu/services/storage/__init__.py
+END

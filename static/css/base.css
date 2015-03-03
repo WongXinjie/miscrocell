@@ -1,0 +1,64 @@
+    html, body{
+      height: 100%;
+    }
+
+    body {
+      background-color: #FFF;
+      padding-top: 70px;
+      background-position: center 0;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      -webkit-background-size: cover;
+      -o-background-size: cover;
+      zoom: 1;
+    }
+ 
+    #wrap {
+	min-height: 100%;
+	height: auto;
+	margin: 0 auto -60px;
+	padding: 0 0 60px;
+	}
+
+    .container .credit{
+	margin: 20px 0;
+	text-align: center;
+	}
+     .textarea{
+	resize:none;
+	overflow-y: auto;
+	text-align: left;
+	}
+
+    #content {
+      min-height: 100%;
+      height: auto;
+    }
+
+    #content .main {
+      padding: 20px;
+      margin-bottom: 15px;
+      background-color: #FFF;
+    }
+    #content .sidebar {
+      padding:   10px 20px;
+      margin-bottom: 15px;
+      background-color: #FFF;
+      width: 280px;
+    }
+
+    #content p {
+      line-height: 30px;
+    }
+    
+    #footer{
+	height: 60px;
+    }
+    #editpage{
+	background-color: #FFF;
+	padding: 20px 40px;
+	margin-bottom: 20px;
+   }
+
+
